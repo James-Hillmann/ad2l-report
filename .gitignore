@@ -1,0 +1,21 @@
+# Secrets
+.env
+.env.local
+
+# Generated output
+ad2l_report.xlsx
+*.xlsx
+
+# Runtime cache
+databasePlayers.json
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Editor / tooling
+.claude/
+.vscode/
+.idea/
