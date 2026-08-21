@@ -1,5 +1,15 @@
+import re
+
 import xlsxwriter
 from .utils import read_json, convert_rank, get_league_name
+
+# Excel rejects [ ] : * ? / \ in worksheet names and caps them at 31 chars.
+_INVALID_SHEET_CHARS = re.compile(r"[\[\]:*?/\\]")
+
+
+def _safe_sheet_name(name: str) -> str:
+    """Make a season title usable as an Excel worksheet name."""
+    return _INVALID_SHEET_CHARS.sub("-", name).strip("'")[:31] or "Sheet"
 
 # --- Column definitions ---
 COLUMNS = [
@@ -375,8 +385,8 @@ def create_excel(output_path: str = "excel.xlsx", data_path: str = "databasePlay
     fmts = _make_formats(workbook)
 
     for season_name, teams in seasons.items():
-        # Truncate sheet name to 31 chars (Excel limit)
-        sheet_name = season_name[:31]
+        # Strip Excel-illegal characters and truncate to the 31-char limit
+        sheet_name = _safe_sheet_name(season_name)
         worksheet = workbook.add_worksheet(name=sheet_name)
 
         # Set column widths once per sheet
