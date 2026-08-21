@@ -281,9 +281,10 @@ def fetch_alt_accounts(player_ids: list[int]) -> dict[int, dict]:
             }
         # Player is a main account on the roster — collect ALL their registered alts
         if main_id in player_id_set:
-            if main_id not in result:
-                result[main_id] = {"is_alt": False, "alt_accounts": []}
-            result[main_id]["alt_accounts"].append({
+            # May already exist from the branch above (player is an alt AND a main),
+            # in which case the entry has no "alt_accounts" key yet.
+            entry = result.setdefault(main_id, {"is_alt": False})
+            entry.setdefault("alt_accounts", []).append({
                 "player_id": alt_id,
                 "name":      alt_name,
                 "steam_id":  str(alt_steam_id) if alt_steam_id else None,
